@@ -1,5 +1,7 @@
 class JobsController < ApplicationController
   before_action :authenticate_user!, only: [:new, :create, :update, :edit, :destroy]
+
+
   def show
     @job = Job.find(params[:id])
     if @job.is_hidden
@@ -9,7 +11,16 @@ class JobsController < ApplicationController
   end
 
   def index
-    @jobs = Job.where(:is_hidden => false).order("created_at DESC")
+    @jobs = case params[:order]
+    when 'by_lower_bound'
+      Job.published.order('wage_lower_bound DESC').paginate(:page => params[:page], :per_page => 6)
+    when 'by_upper_bound'
+      Job.published.order('wage_upper_bound DESC').paginate(:page => params[:page], :per_page => 6)
+    else
+      Job.published.recent.paginate(:page => params[:page], :per_page => 6)
+    end
+
+
   end
 
   def new

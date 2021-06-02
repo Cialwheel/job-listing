@@ -1,25 +1,61 @@
-<div class="pull-right">
-  <%= link_to("Add a job", new_job_path, :class => "btn btn-default" ) %>
+<div class="dropdown clearfix pull-right">
+    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuDivider" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+      排序
+        <span class="caret"></span>
+    </button>
+    <%= link_to("Add a job", new_job_path, :class => "btn btn-primary") %>
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenuDivider">
+      <li>
+        <%= link_to("按照薪资上限", jobs_path(:order => "by_upper_bound")) %>
+      </li>
+      <li>
+        <%= link_to("按照薪资下限",jobs_path(:order => "by_lower_bound")) %>
+      </li>
+      <li>
+        <%= link_to("按照时间顺序", jobs_path) %>
+      </li>
+    </ul>
 </div>
-  <table class="table table-bordered">
-    <% @jobs.each do |job| %>
-    <tr>
-      <td>
-        <% if job.is_hidden %>
-          <%= icon('fas', 'lock') %>
-          <%= link_to(job.title, job_path(job)) %>
-        <% else %>
-          <%= icon('fas', 'globe') %>
-          <%= link_to(job.title, job_path(job)) %>
-        <% end %>
-      </td>
-      <td>
-        <%= link_to("Edit", edit_job_path(job)) %>
-        <%= link_to("Destroy", job_path(job), :method => :delete, :data => { :confirm => "Are you sure?" }) %>
-      </td>
-      <td>
-        <%= job.created_at %>
-      </td>
-    </tr>
-    <% end %>
+  <table class="table table-boldered table-striped custab" >
+    <thead>
+      <tr>
+        <td>职缺</td>
+        <td>薪资下限</td>
+        <td>薪资上限</td>
+        <td>刊登时间</td>
+        <td>管理</td>
+      </tr>
+    </thead>
+    <tbody>
+      <% @jobs.each do |job| %>
+      <tr>
+        <td>
+          <% if job.is_hidden %>
+            <%= icon('fas', 'lock') %>
+            <%= link_to(job.title, job_path(job)) %>
+          <% else %>
+            <%= icon('fas', 'globe') %>
+            <%= link_to(job.title, job_path(job)) %>
+          <% end %>
+        </td>
+        <td>
+          <%= job.wage_lower_bound %>
+        </td>
+        <td>
+          <%= job.wage_upper_bound %>
+        </td>
+        <td>
+          <%= job.created_at %>
+        </td>
+        <td>
+          <%= link_to("Edit", edit_job_path(job)) %>
+          <%= icon('fas', 'grip-lines-vertical') %>
+          <%= link_to("Destroy", job_path(job), :method => :delete, :data => { :confirm => "Are you sure?" }) %>
+        </td>
+      </tr>
+      <% end %>
+    </tbody>
   </table>
+<div class="text-center">
+  <%= will_paginate @jobs %>
+</div>
